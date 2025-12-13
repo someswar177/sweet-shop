@@ -56,7 +56,7 @@ describe('Sweets API', () => {
                 .post('/api/sweets')
                 .set('Authorization', `Bearer ${userToken}`)
                 .send({ name: 'Ladoo', price: 10, category: 'Milk', quantity: 50 });
-            
+
             expect(res.statusCode).toEqual(403);
         });
 
@@ -68,6 +68,40 @@ describe('Sweets API', () => {
 
             expect(res.statusCode).toEqual(201);
             expect(res.body).toHaveProperty('name', 'Kaju Katli');
+        });
+    });
+
+    describe('POST /api/sweets/:id/purchase', () => {
+        let sweetId;
+
+        beforeEach(async () => {
+            const sweet = await request(app)
+                .post('/api/sweets')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Rasmalai', price: 50, category: 'Milk', quantity: 1 });
+            sweetId = sweet.body._id;
+        });
+
+        it('should decrease quantity on successful purchase', async () => {
+            const res = await request(app)
+                .post(`/api/sweets/${sweetId}/purchase`)
+                .set('Authorization', `Bearer ${userToken}`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.data.quantity).toEqual(0);
+        });
+
+        it('should return 400 if out of stock', async () => {
+            await request(app)
+                .post(`/api/sweets/${sweetId}/purchase`)
+                .set('Authorization', `Bearer ${userToken}`);
+
+            const res = await request(app)
+                .post(`/api/sweets/${sweetId}/purchase`)
+                .set('Authorization', `Bearer ${userToken}`);
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body.message).toMatch(/out of stock/i);
         });
     });
 });
