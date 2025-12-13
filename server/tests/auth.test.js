@@ -26,12 +26,48 @@ describe('Auth Endpoints', () => {
                 password: 'password123',
                 role: 'user'
             });
-        
+
         if (res.statusCode !== 201) {
             console.error('Test Failed. Response Body:', res.body);
         }
 
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('message', 'User registered successfully');
+    });
+});
+
+describe('POST /api/auth/login', () => {
+    beforeEach(async () => {
+        await request(app)
+            .post('/api/auth/register')
+            .send({
+                email: 'login@example.com',
+                password: 'password123',
+                role: 'user'
+            });
+    });
+
+    it('should login user and return JWT token', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'login@example.com',
+                password: 'password123'
+            });
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toHaveProperty('token');
+        expect(res.body).toHaveProperty('message', 'Login successful');
+    });
+
+    it('should reject invalid credentials', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'login@example.com',
+                password: 'wrongpassword'
+            });
+
+        expect(res.statusCode).toEqual(401);
     });
 });
