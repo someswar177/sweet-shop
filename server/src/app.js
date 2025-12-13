@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
+const sweetsRoutes = require('./routes/sweetsRoutes');
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/sweets', sweetsRoutes);
 
 if (mongoose.connection.readyState === 0) {
     mongoose.connect(process.env.MONGO_URI)
