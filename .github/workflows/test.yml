@@ -3,12 +3,23 @@ name: Node.js TDD Pipeline
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     defaults:
       run:
         working-directory: ./server
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongosh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
@@ -16,9 +27,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm test
+        
+    - name: Install Dependencies
+      run: npm ci
+      
+    - name: Run Tests
+      env:
+        MONGO_URI: mongodb://localhost:27017/sweetshop_test
+        JWT_SECRET: test_secret
+      run: npm test
