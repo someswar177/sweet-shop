@@ -1,11 +1,31 @@
 import React from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Pencil, Trash2 } from 'lucide-react';
 
-export default function SweetCard({ sweet, onPurchase, isPurchasing }) {
+export default function SweetCard({ sweet, onPurchase, isPurchasing, isAdmin, onEdit, onDelete }) {
   const isOutOfStock = sweet.quantity === 0;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow relative group">
+      
+      {isAdmin && (
+        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded-lg shadow-sm backdrop-blur-sm">
+          <button 
+            onClick={() => onEdit(sweet)}
+            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+            title="Edit Sweet"
+          >
+            <Pencil size={16} />
+          </button>
+          <button 
+            onClick={() => onDelete(sweet._id)}
+            className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+            title="Delete Sweet"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      )}
+
       <div className="h-48 bg-indigo-50 flex items-center justify-center text-4xl">
         🍬
       </div>
