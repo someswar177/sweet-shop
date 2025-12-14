@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
 import SweetCard from '../components/SweetCard';
 import SweetForm from '../components/SweetForm';
+import SweetSkeleton from '../components/SweetSkeleton';
 import toast from 'react-hot-toast';
 import { LogOut, Package, Search, Plus } from 'lucide-react';
 
@@ -140,7 +141,11 @@ export default function Dashboard() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center pt-20 text-gray-500">Loading inventory...</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <SweetSkeleton key={i} />
+            ))}
+          </div>
         ) : sweets.length === 0 ? (
           <div className="text-center pt-20 text-gray-500">No sweets found.</div>
         ) : (
