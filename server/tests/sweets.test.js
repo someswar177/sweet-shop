@@ -43,6 +43,20 @@ describe('Sweets API', () => {
             expect(res.statusCode).toEqual(200);
             expect(res.body).toEqual([]);
         });
+
+        it('should filter sweets by name', async () => {
+            await request(app).post('/api/sweets').set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Gulab Jamun', category: 'Syrup', price: 20, quantity: 10 });
+
+            await request(app).post('/api/sweets').set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Jalebi', category: 'Fried', price: 10, quantity: 10 });
+
+            const res = await request(app).get('/api/sweets?search=Gulab');
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.length).toEqual(1);
+            expect(res.body[0].name).toEqual('Gulab Jamun');
+        });
     });
 
     describe('POST /api/sweets', () => {
