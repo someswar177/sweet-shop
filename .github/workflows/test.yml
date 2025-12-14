@@ -1,11 +1,11 @@
-name: Node.js TDD Pipeline
+name: Full Stack TDD Pipeline
 
 on: [push]
 
 jobs:
-  test:
+  # JOB 1: BACKEND TESTS
+  backend-test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./server
@@ -27,17 +27,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        
     - name: Install Dependencies
       run: npm ci
-      
-    - name: Run Tests
+    - name: Run Backend Tests
       env:
         MONGO_URI: mongodb://localhost:27017/sweetshop_test
         JWT_SECRET: test_secret
+      run: npm test
+
+  # JOB 2: FRONTEND TESTS
+  frontend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Dependencies
+      run: npm install
+    - name: Run Frontend Tests
       run: npm test
