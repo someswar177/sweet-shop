@@ -57,6 +57,25 @@ describe('Sweets API', () => {
             expect(res.body.length).toEqual(1);
             expect(res.body[0].name).toEqual('Gulab Jamun');
         });
+
+        it('should filter by price range and availability', async () => {
+            // Create specific sweets
+            await request(app).post('/api/sweets').set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Cheap InStock', price: 10, category: 'Test', quantity: 10 });
+
+            await request(app).post('/api/sweets').set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Expensive InStock', price: 100, category: 'Test', quantity: 10 });
+
+            await request(app).post('/api/sweets').set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Cheap SoldOut', price: 10, category: 'Test', quantity: 0 });
+
+            // Filter: Max Price 50 and In Stock (available=true)
+            const res = await request(app).get('/api/sweets?maxPrice=50&available=true');
+
+            // Expect ONLY "Cheap In Stock"
+            expect(res.body.length).toEqual(1);
+            expect(res.body[0].name).toEqual('Cheap InStock');
+        });
     });
 
     describe('POST /api/sweets', () => {
