@@ -2,16 +2,29 @@ const Sweet = require('../models/Sweet');
 
 exports.getSweets = async (req, res) => {
     try {
-        const { search } = req.query;
+        const { search, minPrice, maxPrice, available } = req.query; // Destructure
         let query = {};
+
+        // Search
         if (search) {
-            query = {
-                $or: [
-                    { name: { $regex: search, $options: 'i' } },
-                    { category: { $regex: search, $options: 'i' } }
-                ]
-            };
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { category: { $regex: search, $options: 'i' } }
+            ];
         }
+
+        // Price Filtering
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        // Availability Filter (If 'true', quantity must be > 0)
+        if (available === 'true') {
+            query.quantity = { $gt: 0 };
+        }
+
         const sweets = await Sweet.find(query);
         res.json(sweets);
     } catch (error) {
