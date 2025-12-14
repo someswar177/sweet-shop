@@ -85,6 +85,59 @@ describe('Sweets API', () => {
         });
     });
 
+    describe('PUT /api/sweets/:id', () => {
+        let sweetId;
+
+        beforeEach(async () => {
+            const sweet = await request(app)
+                .post('/api/sweets')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Old Sweet', price: 10, category: 'Test', quantity: 5 });
+            sweetId = sweet.body._id;
+        });
+
+        it('should allow admin to update a sweet', async () => {
+            const res = await request(app)
+                .put(`/api/sweets/${sweetId}`)
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'Updated Sweet', price: 15, quantity: 20 });
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.name).toEqual('Updated Sweet');
+            expect(res.body.quantity).toEqual(20);
+        });
+
+        it('should prevent non-admins from updating', async () => {
+            const res = await request(app)
+                .put(`/api/sweets/${sweetId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ price: 100 });
+
+            expect(res.statusCode).toEqual(403);
+        });
+    });
+
+    describe('DELETE /api/sweets/:id', () => {
+        let sweetId;
+
+        beforeEach(async () => {
+            const sweet = await request(app)
+                .post('/api/sweets')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({ name: 'To Delete', price: 10, category: 'Test', quantity: 5 });
+            sweetId = sweet.body._id;
+        });
+
+        it('should allow admin to delete a sweet', async () => {
+            const res = await request(app)
+                .delete(`/api/sweets/${sweetId}`)
+                .set('Authorization', `Bearer ${adminToken}`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.message).toMatch(/removed/i);
+        });
+    });
+
     describe('POST /api/sweets/:id/purchase', () => {
         let sweetId;
 
