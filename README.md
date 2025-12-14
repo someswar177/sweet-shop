@@ -1,8 +1,11 @@
 # 🍬 Sweet Shop Management System
 
-![Build Status](https://github.com/someswar177/sweet-shop/actions/workflows/test.yml/badge.svg)
+[![Build Status](https://github.com/someswar177/sweet-shop/actions/workflows/test.yml/badge.svg)](https://github.com/someswar177/sweet-shop/actions)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-v22+-green.svg)
+
+> **🚀 Live Demo:** [https://sweet-shop.vercel.app](https://sweet-shop.vercel.app)
+> *(Note: The backend is hosted on Render free tier. The first request may take 30-50s to wake up. Please be patient!)*
 
 A full-stack **Software Craftsmanship assessment project**. This application manages a sweet shop inventory with secure authentication, atomic purchasing transactions, and a reactive UI. Built with a strong focus on **TDD (Test Driven Development)** and **Clean Architecture**.
 
@@ -11,22 +14,21 @@ A full-stack **Software Craftsmanship assessment project**. This application man
 ## 🚀 Features
 
 ### 🔒 Security & Authentication
+* **JWT Authentication:** Secure stateless session management.
+* **RBAC (Role-Based Access Control):** Distinct `User` vs `Admin` capabilities.
+* **BCrypt Hashing:** Passwords are never stored in plain text.
+* **Security Hardening:** Implemented `Helmet` headers and `Zod` input validation.
 
-* **JWT Authentication:** Secure stateless session management
-* **RBAC (Role-Based Access Control):** Distinct `User` and `Admin` capabilities
-* **BCrypt Hashing:** Passwords are never stored in plain text
-
-### 🍬 Inventory Management
-
-* **Atomic Transactions:** Uses MongoDB `$inc` and conditional updates to prevent race conditions (overselling stock)
-* **Search & Filter:** Real-time filtering of sweets by name or category
-* **Stock Tracking:** Visual indicators for out-of-stock items
+### 🍬 Inventory Management (Admin)
+* **Full CRUD:** Admins can Add, Edit, and Delete sweets via a modal interface.
+* **Atomic Transactions:** Uses MongoDB `$inc` to prevent race conditions (overselling stock).
+* **Smart Seeding:** Database pre-populated with verified image assets.
 
 ### 💻 Modern Frontend
-
-* **Responsive Dashboard:** Built with React + Tailwind CSS
-* **Optimistic UI:** Instant feedback before server confirmation
-* **Protected Routes:** Guards to prevent unauthorized access
+* **Responsive Dashboard:** Built with React + Tailwind CSS (Mobile Optimized).
+* **Advanced Filtering:** Filter by Price Range, Availability, and Name.
+* **Optimistic UI:** Instant feedback on purchases before server confirmation.
+* **Smart Image Fallbacks:** Gracefully handles missing images with default assets or emojis.
 
 ---
 
@@ -34,17 +36,22 @@ A full-stack **Software Craftsmanship assessment project**. This application man
 
 | Domain       | Technologies                                                         |
 | ------------ | -------------------------------------------------------------------- |
-| **Backend**  | Node.js, Express.js, MongoDB (Mongoose), Zod                         |
-| **Frontend** | React (Vite), Tailwind CSS, Context API, Axios                       |
-| **Testing**  | Jest, Supertest (Backend Integration), Vitest, React Testing Library |
-| **DevOps**   | GitHub Actions (CI with MongoDB Service Container)                   |
+| **Backend** | Node.js, Express.js, MongoDB (Mongoose), Zod, Helmet                 |
+| **Frontend** | React (Vite), Tailwind CSS, Context API, Axios, Lucide React         |
+| **Testing** | Jest, Supertest (Backend Integration), Vitest, React Testing Library |
+| **DevOps** | GitHub Actions (CI Pipeline), Render (Backend), Vercel (Frontend)    |
+
+---
+
+## 🧪 Test Report
+A comprehensive test report detailing all executed test cases is available here:
+[📄 View Full Test Report](./TEST_REPORT.md)
 
 ---
 
 ## 🏃‍♂️ Getting Started
 
 ### Prerequisites
-
 * Node.js **v18+**
 * MongoDB (Local instance or MongoDB Atlas)
 
@@ -53,7 +60,6 @@ A full-stack **Software Craftsmanship assessment project**. This application man
 ## 🔧 Backend Setup
 
 1. **Navigate to the server directory**
-
    ```bash
    cd server
    ```
@@ -128,7 +134,6 @@ In alignment with the assessment guidelines, AI tools were used strictly as a **
 
 * **Gemini (Google)**
 * **Chatgpt**
-* **GitHub Copilot (VS Code)**
 
 ### Detailed Usage Report
 
