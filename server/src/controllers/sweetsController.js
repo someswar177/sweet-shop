@@ -2,7 +2,17 @@ const Sweet = require('../models/Sweet');
 
 exports.getSweets = async (req, res) => {
     try {
-        const sweets = await Sweet.find({});
+        const { search } = req.query;
+        let query = {};
+        if (search) {
+            query = {
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { category: { $regex: search, $options: 'i' } }
+                ]
+            };
+        }
+        const sweets = await Sweet.find(query);
         res.json(sweets);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -24,9 +34,9 @@ exports.purchaseSweet = async (req, res) => {
     try {
         const { id } = req.params;
         const sweet = await Sweet.findOneAndUpdate(
-            { _id: id, quantity: { $gt: 0 } }, 
-            { $inc: { quantity: -1 } },        
-            { new: true }                      
+            { _id: id, quantity: { $gt: 0 } },
+            { $inc: { quantity: -1 } },
+            { new: true }
         );
 
         if (!sweet) {
