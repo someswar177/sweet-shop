@@ -41,4 +41,18 @@ describe('SweetCard Component', () => {
     
     expect(handlePurchase).toHaveBeenCalledWith('123');
   });
+
+  it('shows admin controls when isAdmin is true', () => {
+    render(<SweetCard sweet={mockSweet} isAdmin={true} />);
+    
+    expect(screen.getByTitle('Edit Sweet')).toBeInTheDocument();
+    expect(screen.getByTitle('Delete Sweet')).toBeInTheDocument();
+  });
+
+  it('does NOT show admin controls when isAdmin is false', () => {
+    render(<SweetCard sweet={mockSweet} isAdmin={false} />);
+    
+    expect(screen.queryByTitle('Edit Sweet')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Delete Sweet')).not.toBeInTheDocument();
+  });
 });
