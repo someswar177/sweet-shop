@@ -28,7 +28,7 @@ describe('SweetCard Component', () => {
     render(<SweetCard sweet={mockOutOfStockSweet} />);
     
     const button = screen.getByRole('button');
-    expect(button).not.toBeDisabled();
+    expect(button).toBeDisabled();
     expect(button).toHaveTextContent('Sold Out');
   });
 
