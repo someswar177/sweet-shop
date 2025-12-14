@@ -48,3 +48,39 @@ exports.purchaseSweet = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
+// (Admin only):
+exports.updateSweet = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sweet = await Sweet.findByIdAndUpdate(
+            id, 
+            req.body, 
+            { new: true, runValidators: true }
+        );
+
+        if (!sweet) {
+            return res.status(404).json({ message: 'Sweet not found' });
+        }
+
+        res.json(sweet);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// (Admin only):
+exports.deleteSweet = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sweet = await Sweet.findByIdAndDelete(id);
+
+        if (!sweet) {
+            return res.status(404).json({ message: 'Sweet not found' });
+        }
+
+        res.json({ message: 'Sweet removed' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
