@@ -4,11 +4,13 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const sweetsRoutes = require('./routes/sweetsRoutes');
 const cors = require('cors');
+const helmet = require('helmet');
 
 dotenv.config();
 
 const app = express();
 
+app.use(helmet());
 app.use(cors()); 
 app.use(express.json());
 
