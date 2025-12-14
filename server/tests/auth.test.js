@@ -34,6 +34,26 @@ describe('Auth Endpoints', () => {
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('message', 'User registered successfully');
     });
+
+    it('should return 400 if email already exists', async () => {
+        // 1. Register a user
+        await request(app).post('/api/auth/register').send({
+            email: 'duplicate@test.com',
+            password: 'password123',
+            role: 'user'
+        });
+
+        // 2. Try to register SAME user again
+        const res = await request(app).post('/api/auth/register').send({
+            email: 'duplicate@test.com',
+            password: 'password123',
+            role: 'user'
+        });
+
+        // 3. Expect specific error message
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.message).toMatch(/already exists/i);
+    });
 });
 
 describe('POST /api/auth/login', () => {
