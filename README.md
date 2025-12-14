@@ -32,6 +32,21 @@ A full-stack **Software Craftsmanship assessment project**. This application man
 
 ---
 
+## 📸 Application Screenshots
+
+### 1. Interactive Dashboard
+*Real-time inventory grid with Price & Availability filters.*
+![Dashboard](./screenshots/dashboard.png)
+
+### 2. Admin Inventory Management
+*Secure modal interface for Adding and Editing sweets.*
+![Admin Modal](./screenshots/admin-modal.png)
+
+### 2. Mobile View
+![Mobile View](./screenshots/mobile-view.png)
+
+---
+
 ## 🛠️ Tech Stack
 
 | Domain       | Technologies                                                         |
