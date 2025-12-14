@@ -55,4 +55,32 @@ describe('SweetCard Component', () => {
     expect(screen.queryByTitle('Edit Sweet')).not.toBeInTheDocument();
     expect(screen.queryByTitle('Delete Sweet')).not.toBeInTheDocument();
   });
+
+  it('renders specific image if provided', () => {
+    const sweetWithImage = { ...mockSweet, image: '/images/test.jpg' };
+    render(<SweetCard sweet={sweetWithImage} />);
+    
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('src', '/images/test.jpg');
+  });
+
+  it('falls back to default image if sweet has no image property', () => {
+    // Sweet with undefined image
+    const sweetNoImage = { ...mockSweet, image: undefined };
+    render(<SweetCard sweet={sweetNoImage} />);
+    
+    const img = screen.getByRole('img');
+    // We expect our logic to default to this
+    expect(img).toHaveAttribute('src', '/images/sweets.jpg');
+  });
+
+  it('shows emoji fallback when image loading fails', () => {
+    render(<SweetCard sweet={mockSweet} />);
+    
+    const img = screen.getByRole('img');
+    
+    // Simulate an error (broken link)
+    fireEvent.error(img);
+    expect(screen.getByText('🍬')).toBeInTheDocument();
+  });
 });
