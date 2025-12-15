@@ -34,16 +34,15 @@ A full-stack **Software Craftsmanship assessment project**. This application man
 
 ## 📸 Application Screenshots
 
-### 1. Interactive Dashboard
-*Real-time inventory grid with Price & Availability filters.*
+### 🏪 The Shop Floor (Interactive Dashboard)
+*Features the new "SweetShop" rose-gold branding, real-time inventory grid, and smart filtering.*
 ![Dashboard](./screenshots/dashboard.png)
 
-### 2. Admin Inventory Management
-*Secure modal interface for Adding and Editing sweets.*
-![Admin Modal](./screenshots/admin-modal.png)
-
-### 2. Mobile View
-![Mobile View](./screenshots/mobile-view.png)
+### 🎨 Design & Experience
+| **Secure Entry (Auth)** | **Inventory Control** | **Mobile Responsive** |
+|:---:|:---:|:---:|
+| ![Login](./screenshots/login.png) | ![Modal](./screenshots/admin-modal.png) | ![Mobile](./screenshots/mobile-view.png) |
+| *Modern gradients & glassmorphism* | *Thematic "Recipe" management* | *Optimized for all devices* |
 
 ---
 
