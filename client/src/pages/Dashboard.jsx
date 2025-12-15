@@ -6,7 +6,7 @@ import SweetForm from '../components/SweetForm';
 import SweetSkeleton from '../components/SweetSkeleton';
 import DeleteModal from '../components/DeleteModal';
 import toast from 'react-hot-toast';
-import { LogOut, Package, Search, Plus, Filter, SlidersHorizontal } from 'lucide-react';
+import { LogOut, Candy, Search, Plus, SlidersHorizontal, ChefHat, X } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -22,12 +22,10 @@ export default function Dashboard() {
   const [maxPrice, setMaxPrice] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
 
-  // Admin Modal States
+  // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSweet, setEditingSweet] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Delete Modal States
   const [deleteData, setDeleteData] = useState({ isOpen: false, id: null, name: '' });
 
   useEffect(() => {
@@ -50,7 +48,7 @@ export default function Dashboard() {
     setPurchasingId(id);
     try {
       const res = await api.post(`/sweets/${id}/purchase`);
-      toast.success(`Enjoy your ${res.data.data.name}!`);
+      toast.success(`Delicious choice! ${res.data.data.name} added.`);
       setSweets(prev => prev.map(s => s._id === id ? { ...s, quantity: s.quantity - 1 } : s));
     } catch (error) {
       toast.error(error.response?.data?.message || 'Could not purchase');
@@ -77,11 +75,11 @@ export default function Dashboard() {
   const confirmDelete = async () => {
     try {
       await api.delete(`/sweets/${deleteData.id}`);
-      toast.success('Sweet deleted');
+      toast.success('Removed from display case');
       setSweets(prev => prev.filter(s => s._id !== deleteData.id));
-      setDeleteData({ isOpen: false, id: null, name: '' }); // Close Modal
+      setDeleteData({ isOpen: false, id: null, name: '' }); 
     } catch (error) {
-      toast.error('Failed to delete');
+      toast.error('Failed to remove');
     }
   };
 
@@ -91,11 +89,11 @@ export default function Dashboard() {
       if (editingSweet) {
         const res = await api.put(`/sweets/${editingSweet._id}`, formData);
         setSweets(prev => prev.map(s => s._id === editingSweet._id ? res.data : s));
-        toast.success('Updated successfully');
+        toast.success('Sweet recipe updated');
       } else {
         const res = await api.post('/sweets', formData);
         setSweets(prev => [...prev, res.data]);
-        toast.success('Sweet added');
+        toast.success('Fresh sweet added to shelf');
       }
       setIsModalOpen(false);
     } catch (error) {
@@ -106,47 +104,64 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* 1. MAIN NAVBAR (Brand & Search) */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-20">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans selection:bg-rose-100 selection:text-rose-900">
+      {/* 1. MAIN NAVBAR */}
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm/50 backdrop-blur-lg bg-white/90 supports-[backdrop-filter]:bg-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
-            <div className="flex items-center gap-2 text-indigo-600">
-              <div className="bg-indigo-600 text-white p-1.5 rounded-lg">
-                <Package size={20} />
+            {/* BRAND LOGO */}
+            <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.location.reload()}>
+              <div className="bg-gradient-to-br from-orange-400 to-rose-500 text-white p-2 rounded-xl shadow-lg shadow-rose-200 group-hover:scale-105 transition-transform duration-300">
+                <Candy size={22} className="drop-shadow-sm" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">SweetShop</h1>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-extrabold bg-gradient-to-r from-orange-500 to-rose-600 bg-clip-text text-transparent tracking-tight leading-none">
+                  SweetShop
+                </h1>
+                <span className="text-[10px] text-gray-400 font-medium tracking-widest uppercase mt-0.5">Premium Desserts</span>
+              </div>
             </div>
 
-            {/* Search Bar (Centered & Wide) */}
-            <div className="hidden sm:block flex-1 max-w-lg mx-8">
-              <div className="relative">
+            {/* Desktop Search */}
+            <div className="hidden sm:block flex-1 max-w-lg mx-8 transition-all duration-300 focus-within:max-w-xl">
+              <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-400" />
+                  <Search size={18} className="text-gray-400 group-focus-within:text-rose-500 transition-colors" />
                 </div>
                 <input
                   type="text"
-                  placeholder="Search for sweets, categories..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="Search for gulab jamun, ladoo..."
+                  // Added pr-10 to prevent text from going behind the X button
+                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-full bg-gray-50 focus:bg-white focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all shadow-inner focus:shadow-lg"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
+                
+                {/* CLEAR BUTTON (X) */}
+                {search && (
+                  <button 
+                    onClick={() => setSearch('')}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
               </div>
             </div>
 
             {/* User Profile */}
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-sm font-semibold text-gray-900">{user?.email}</span>
-                <span className="text-xs text-indigo-600 font-medium px-2 py-0.5 bg-indigo-50 rounded-full uppercase tracking-wide">
-                  {user?.role}
+                <span className="text-sm font-semibold text-gray-700">{user?.email}</span>
+                <span className="text-[10px] text-rose-600 font-bold px-2 py-0.5 bg-rose-50 rounded-full uppercase tracking-wider border border-rose-100">
+                  {user?.role === 'admin' ? 'Store Manager' : 'Customer'}
                 </span>
               </div>
               <button 
                 onClick={logout} 
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
-                title="Logout"
+                className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200"
+                title="Sign Out"
               >
                 <LogOut size={20} />
               </button>
@@ -154,87 +169,105 @@ export default function Dashboard() {
           </div>
         </div>
         
-        {/* Mobile Search (Visible only on small screens) */}
-        <div className="sm:hidden px-4 pb-3">
+        {/* Mobile Search */}
+        <div className="sm:hidden px-4 pb-4 pt-1">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search size={18} className="text-gray-400" />
             </div>
             <input
               type="text"
-              placeholder="Search..."
-              className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg bg-gray-50"
+              placeholder="Search sweets..."
+              className="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl bg-gray-50 focus:ring-2 focus:ring-rose-500/50 focus:bg-white focus:border-rose-500 transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            {/* MOBILE CLEAR BUTTON (X) */}
+            {search && (
+              <button 
+                onClick={() => setSearch('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-rose-500 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            )}
           </div>
         </div>
       </nav>
 
-      <div className="bg-white border-b border-gray-200 shadow-sm z-10">
+      {/* 2. FILTERS & ACTIONS (Sticky) */}
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-[64px] sm:top-[64px] z-20 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             
+            {/* Filters Group */}
             <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
-              <div className="flex items-center gap-2 text-gray-500 text-sm font-medium mr-2">
+              <div className="flex items-center gap-2 text-gray-500 text-sm font-medium mr-2 whitespace-nowrap">
                 <SlidersHorizontal size={16} />
-                <span>Filters:</span>
+                <span className="hidden sm:inline">Find your craving:</span>
               </div>
               
-              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-                <span className="text-xs text-gray-500">Price</span>
+              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 focus-within:ring-1 focus-within:ring-rose-500 focus-within:border-rose-500 transition-all shadow-sm">
+                <span className="text-xs text-gray-400 font-bold">₹</span>
                 <input 
                   type="number" placeholder="Min" 
-                  className="w-12 bg-transparent text-sm focus:outline-none text-center"
+                  className="w-10 bg-transparent text-sm focus:outline-none text-center placeholder:text-gray-300"
                   value={minPrice} onChange={e => setMinPrice(e.target.value)}
                 />
                 <span className="text-gray-300">|</span>
                 <input 
                   type="number" placeholder="Max" 
-                  className="w-12 bg-transparent text-sm focus:outline-none text-center"
+                  className="w-10 bg-transparent text-sm focus:outline-none text-center placeholder:text-gray-300"
                   value={maxPrice} onChange={e => setMaxPrice(e.target.value)}
                 />
               </div>
 
               <button 
                 onClick={() => setAvailableOnly(!availableOnly)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-all whitespace-nowrap shadow-sm ${
                   availableOnly 
-                    ? 'bg-green-50 text-green-700 border-green-200' 
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    ? 'bg-green-50 text-green-700 border-green-200 shadow-green-100' 
+                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300'
                 }`}
               >
-                <div className={`w-2 h-2 rounded-full ${availableOnly ? 'bg-green-500' : 'bg-gray-300'}`} />
-                In Stock Only
+                <div className={`w-2 h-2 rounded-full transition-colors ${availableOnly ? 'bg-green-500' : 'bg-gray-300'}`} />
+                Fresh Stock Only
               </button>
             </div>
 
-            {/* Right: Admin Actions */}
+            {/* Admin Action - Thematic Button */}
             {isAdmin && (
               <button 
                 onClick={handleAddClick}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 shadow-sm transition-all active:scale-95 text-sm font-medium"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-rose-600 text-white px-5 py-2 rounded-xl hover:shadow-lg hover:shadow-rose-200 hover:scale-[1.02] active:scale-95 transition-all text-sm font-bold tracking-wide"
               >
-                <Plus size={18} />
-                Add New Sweet
+                <ChefHat size={18} strokeWidth={2.5} />
+                Stock New Treat
               </button>
             )}
           </div>
         </div>
       </div>
 
+      {/* 3. SWEET GRID */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => <SweetSkeleton key={i} />)}
           </div>
         ) : sweets.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl border border-gray-100 shadow-sm">
-            <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Filter className="text-gray-400" size={24} />
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-200">
+            <div className="bg-rose-50 w-20 h-20 rounded-full flex items-center justify-center mb-4 animate-pulse">
+              <Search className="text-rose-300" size={32} />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800">No sweets found</h2>
-            <p className="text-gray-500">Try adjusting your filters or search terms.</p>
+            <h2 className="text-xl font-bold text-gray-800">No sweets found</h2>
+            <p className="text-gray-500 mt-2">Our shelves are empty for this search.</p>
+            <button 
+              onClick={() => {setSearch(''); setMinPrice(''); setMaxPrice(''); setAvailableOnly(false);}}
+              className="mt-6 text-rose-600 font-semibold hover:text-rose-700 hover:underline transition-all"
+            >
+              Clear all filters
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -246,13 +279,14 @@ export default function Dashboard() {
                 isPurchasing={purchasingId === sweet._id}
                 isAdmin={isAdmin} 
                 onEdit={handleEditClick}
-                onDelete={() => handleDeleteClick(sweet)}
+                onDelete={() => handleDeleteClick(sweet)} 
               />
             ))}
           </div>
         )}
       </main>
 
+      {/* Modals */}
       {isModalOpen && (
         <SweetForm 
           initialData={editingSweet}
